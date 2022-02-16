@@ -1,0 +1,47 @@
+---
+  - name: Shell Commands LVM
+    hosts: all
+    gather_facts: no
+    become: yes
+    tasks:
+      - name: Check OS Version
+        shell:
+          "cat /etc/*release"
+        register: var_osrel     # Allows to save all cat /etc/*release i this variable
+
+      - debug: var=var_osrel.stdout_lines # Allows to print var_osrel output during ansible-playbook run
+
+      - name: Check VMDK Disk are splitted
+        shell:
+          "lsblk"
+        register: var_lsblk
+
+      - debug: var=var_lsblk.stdout_lines
+
+      - name: SCSI Instances
+        shell:
+          "lsscsi -s"
+        register: var_scsi
+
+      - debug: var=var_scsi.stdout_lines
+
+      - name: List of filesystems / corresponding VG
+        shell:
+          "lvdisplay | grep -E 'LV Path|VG Name'"
+        register: var_fsvg
+
+      - debug: var=var_fsvg.stdout_lines
+
+      - name: Lists of VG
+        shell:
+          "vgs"
+        register: var_vgs
+
+      - debug: var=var_vgs.stdout_lines
+
+      - name: List of lvs
+        shell:
+          "lvs"
+        register: var_lvs
+
+      - debug: var=var_lvs.stdout_lines
